@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bouncing Rectangle with Constant Flashing</title>
+    <style>
+        canvas {
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let x = canvas.width / 2 - 25; // Start in the center
+        let y = canvas.height / 2 - 25;
+        let speedX = 2;
+        let speedY = 2;
+        const rectangleSize = 50;
+        const flashDuration = 200; // Flash duration in milliseconds
+        const flashInterval = 8000; // Flash interval in milliseconds (8 seconds)
+
+        function flashRed() {
+            // Change rectangle color to red
+            ctx.fillStyle = '#F00';
+            ctx.fillRect(x, y, rectangleSize, rectangleSize);
+
+            // Return to blue after the flash duration
+            setTimeout(() => {
+                ctx.fillStyle = '#00F';
+                ctx.fillRect(x, y, rectangleSize, rectangleSize);
+            }, flashDuration);
+        }
+
+        function scheduleNextFlash() {
+            // Schedule the next flash after the flash interval
+            setInterval(() => {
+                flashRed(); // Flash red
+            }, flashInterval);
+        }
+
+        function gameLoop() {
+            // Update game state
+            x += speedX;
+            y += speedY;
+
+            // Bounce off the walls
+            if (x < 0) {
+                x = 0;
+                speedX = Math.abs(speedX); // Reverse speedX
+            }
+            if (x + rectangleSize > canvas.width) {
+                x = canvas.width - rectangleSize;
+                speedX = -Math.abs(speedX); // Reverse speedX
+            }
+            if (y < 0) {
+                y = 0;
+                speedY = Math.abs(speedY); // Reverse speedY
+            }
+            if (y + rectangleSize > canvas.height) {
+                y = canvas.height - rectangleSize;
+                speedY = -Math.abs(speedY); // Reverse speedY
+            }
+
+            // Clear the canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw the bouncing rectangle
+            ctx.fillStyle = '#00F';
+            ctx.fillRect(x, y, rectangleSize, rectangleSize);
+
+            // Repeat the loop
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Start the game loop
+        gameLoop();
+
+        // Schedule the first flash
+        scheduleNextFlash();
+    </script>
+</body>
+</html>
